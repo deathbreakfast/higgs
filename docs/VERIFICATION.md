@@ -72,6 +72,6 @@ Covering integ tests:
 
 - Tests may `unwrap`/`expect`; production paths map failures to [`HiggsError`](../higgs-core) /
   `anyhow` (no ordinary-path unwrap).
-- Sad-path assertions check typed variants or opaque display strings — not smoke-only `is_err()`.
+- Sad-path assertions check typed variants or opaque display strings — (stronger than `is_err()` alone).
 - Happy-path tests are named `*_happy_path` so audits detect them.
 - Runnable teaching hosts: [`higgs/examples/README.md`](../higgs/examples/README.md).
