@@ -1,0 +1,108 @@
+[package]
+name = "higgs"
+version = "0.1.0"
+edition = "2021"
+description = "Platform Higgs — Valence + Chronon/Boson/Photon accessors above coordinators"
+license = "MIT"
+repository = "https://github.com/unified-field-dev/higgs"
+publish = false
+
+[dependencies]
+# Valence/session hub (package name higgs-core).
+higgs-core = { path = "../higgs-core", default-features = false }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+async-trait = { workspace = true }
+log = { workspace = true }
+higgs-identity = { workspace = true }
+higgs-host = { workspace = true, optional = true }
+leptos = { workspace = true, optional = true }
+valence = { workspace = true }
+
+chronon-coordinator = { workspace = true, optional = true }
+boson-coordinator = { workspace = true, optional = true, default-features = false }
+photon = { workspace = true, optional = true, default-features = false }
+
+[dev-dependencies]
+higgs-core = { path = "../higgs-core", default-features = false, features = ["test-utils"] }
+higgs-macros = { path = "../higgs-macros" }
+tokio = { workspace = true }
+anyhow = { workspace = true }
+async-trait = { workspace = true }
+axum = { workspace = true, default-features = false, features = ["http1", "tokio"] }
+tower = { version = "0.5", features = ["util"] }
+leptos_axum = { workspace = true }
+chronon-valence-identity = { workspace = true }
+chronon-core = { workspace = true }
+chronon-executor = { workspace = true }
+chronon-coordinator-macros = { workspace = true }
+boson-valence-identity = { workspace = true }
+photon-valence-identity = { workspace = true }
+boson-backend-mem = { workspace = true }
+boson-runtime = { workspace = true }
+boson-core = { workspace = true }
+boson-macros = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+quark = { package = "uf-quark", version = "0.1.1" }
+futures = "0.3"
+photon-core = { package = "uf-photon-core", git = "https://github.com/unified-field-dev/photon", tag = "v0.1.2" }
+
+[lints]
+workspace = true
+
+[features]
+default = []
+test-utils = ["higgs-core/test-utils"]
+ssr = [
+    "dep:higgs-host",
+    "higgs-host/ssr",
+    "dep:leptos",
+    "leptos/ssr",
+    "higgs-core/ssr",
+    "preflight",
+]
+preflight = ["higgs-core/preflight"]
+chronon = ["dep:chronon-coordinator"]
+boson = ["dep:boson-coordinator"]
+photon = ["dep:photon", "photon/runtime"]
+full = ["chronon", "boson", "photon"]
+
+[[test]]
+name = "config_contract"
+required-features = ["test-utils"]
+
+[[example]]
+name = "config_boot"
+
+[[example]]
+name = "shared_factory"
+required-features = ["ssr"]
+
+[[example]]
+name = "preflight_boot"
+required-features = ["preflight"]
+
+[[example]]
+name = "axum_session_host"
+required-features = ["ssr"]
+
+[[example]]
+name = "server_fn_context"
+required-features = ["ssr"]
+
+[[example]]
+name = "chronon_job"
+required-features = ["chronon"]
+
+[[example]]
+name = "boson_task"
+required-features = ["boson"]
+
+[[example]]
+name = "photon_worker"
+required-features = ["photon"]
+
+[[example]]
+name = "server_fn_backends"
+required-features = ["ssr", "full"]

@@ -1,0 +1,20 @@
+[package]
+name = "higgs-identity"
+version = "0.1.0"
+edition = "2021"
+description = "Abstract session identity contract for host layers"
+license = "MIT"
+
+[dependencies]
+subtle = { workspace = true }
+async-trait = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+
+[dev-dependencies]
+serde_json = { workspace = true }
+
+[lints]
+workspace = true
+
+[[test]]
+name = "session_contract"
