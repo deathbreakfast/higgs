@@ -1,0 +1,34 @@
+[package]
+name = "higgs-host"
+version = "0.1.0"
+edition = "2021"
+description = "Host request context — Valence router and session snapshot"
+license = "MIT"
+
+[dependencies]
+higgs-identity = { path = "../higgs-identity" }
+valence = { workspace = true }
+leptos = { workspace = true, default-features = false }
+leptos_axum = { workspace = true, optional = true }
+axum = { workspace = true, optional = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true, optional = true }
+tokio = { workspace = true, optional = true }
+anyhow = { workspace = true, optional = true }
+
+[lints]
+workspace = true
+
+[features]
+default = []
+ssr = [
+    "leptos/ssr",
+    "dep:leptos_axum",
+    "dep:axum",
+    "dep:tokio",
+    "dep:serde_json",
+    "dep:anyhow"]
+
+[[test]]
+name = "host_session_contract"
+required-features = ["ssr"]

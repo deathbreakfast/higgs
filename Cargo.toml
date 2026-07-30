@@ -1,0 +1,79 @@
+[workspace]
+resolver = "2"
+members = [
+    "higgs-core",
+    "higgs",
+    "higgs-macros",
+    "higgs-identity",
+    "higgs-host",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+# Deny undocumented public items. Only crates that opt in with `[lints]\nworkspace = true`
+# inherit this; unlisted workspace members are unaffected until they opt in too.
+[workspace.lints.rust]
+missing_docs = "deny"
+
+[workspace.lints.clippy]
+pedantic = { level = "warn", priority = -1 }
+nursery = { level = "warn", priority = -1 }
+unwrap_used = "deny"
+expect_used = "deny"
+dbg_macro = "deny"
+print_stdout = "deny"
+print_stderr = "deny"
+cognitive_complexity = "deny"
+too_many_lines = "warn"
+missing_errors_doc = "warn"
+missing_panics_doc = "warn"
+module_name_repetitions = "allow"
+must_use_candidate = "allow"
+return_self_not_must_use = "allow"
+
+[workspace.dependencies]
+thiserror = "2.0.12"
+serde_json = "1.0"
+tracing = "0.1"
+log = "0.4.27"
+async-trait = "0.1"
+valence = { package = "uf-valence", git = "https://github.com/unified-field-dev/valence", tag = "v0.1.2", default-features = false, features = ["mem", "sqlite"] }
+anyhow = "1"
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+serde = { version = "1", features = ["derive"] }
+leptos = { version = "0.8", default-features = false, features = ["nightly"] }
+leptos_axum = { version = "0.8", default-features = false }
+axum = { version = "0.8", default-features = false }
+subtle = "2.6"
+higgs-identity = { path = "higgs-identity" }
+higgs-host = { path = "higgs-host", default-features = false }
+higgs-core = { path = "higgs-core", default-features = false }
+higgs = { path = "higgs", default-features = false }
+boson-coordinator = { git = "https://github.com/unified-field-dev/boson-coordinator", branch = "main", default-features = false }
+chronon-coordinator = { git = "https://github.com/unified-field-dev/chronon-coordinator", branch = "main" }
+chronon-core = { git = "https://github.com/unified-field-dev/chronon", rev = "6c9ec6dfe7e4343269cfb336ae9773e7e180cddb" }
+chronon-executor = { git = "https://github.com/unified-field-dev/chronon", rev = "6c9ec6dfe7e4343269cfb336ae9773e7e180cddb" }
+photon = { package = "uf-photon", git = "https://github.com/unified-field-dev/photon", tag = "v0.1.2", default-features = false }
+chronon-valence-identity = { git = "https://github.com/unified-field-dev/chronon-valence-identity", branch = "main" }
+boson-valence-identity = { git = "https://github.com/unified-field-dev/boson-valence-identity", branch = "main" }
+photon-valence-identity = { git = "https://github.com/unified-field-dev/photon-valence-identity", branch = "main" }
+boson-backend-mem = { git = "https://github.com/unified-field-dev/boson", tag = "v0.1.2" }
+boson-runtime = { git = "https://github.com/unified-field-dev/boson", tag = "v0.1.2", default-features = false }
+boson-core = { git = "https://github.com/unified-field-dev/boson", tag = "v0.1.2" }
+boson-macros = { git = "https://github.com/unified-field-dev/boson", tag = "v0.1.2" }
+chronon-coordinator-macros = { git = "https://github.com/unified-field-dev/chronon-coordinator-macros", branch = "main", default-features = false }
+
+# Unify transitive crates.io pulls with the git pins used by this workspace.
+[patch.crates-io]
+uf-valence = { git = "https://github.com/unified-field-dev/valence", tag = "v0.1.2" }
+uf-photon = { git = "https://github.com/unified-field-dev/photon", tag = "v0.1.2" }
+uf-photon-core = { git = "https://github.com/unified-field-dev/photon", tag = "v0.1.2" }
+photon-backend = { git = "https://github.com/unified-field-dev/photon", tag = "v0.1.2" }
+photon-runtime = { git = "https://github.com/unified-field-dev/photon", tag = "v0.1.2" }
+photon-telemetry = { git = "https://github.com/unified-field-dev/photon", tag = "v0.1.2" }
+photon-macros = { git = "https://github.com/unified-field-dev/photon", tag = "v0.1.2" }
+chronon-core = { git = "https://github.com/unified-field-dev/chronon", rev = "6c9ec6dfe7e4343269cfb336ae9773e7e180cddb" }
+chronon-executor = { git = "https://github.com/unified-field-dev/chronon", rev = "6c9ec6dfe7e4343269cfb336ae9773e7e180cddb" }

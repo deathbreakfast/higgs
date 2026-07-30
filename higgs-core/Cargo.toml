@@ -1,0 +1,44 @@
+[package]
+name = "higgs-core"
+version = "0.1.0"
+edition = "2021"
+description = "Unified application context — config, preflight, server-runtime, and per-request extraction"
+license = "MIT"
+
+[dependencies]
+valence = { workspace = true }
+serde_json = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+async-trait = { workspace = true }
+tracing = { workspace = true }
+log = { workspace = true }
+tokio = { workspace = true }
+higgs-identity = { workspace = true }
+higgs-host = { workspace = true, optional = true }
+leptos = { workspace = true, optional = true }
+
+[dev-dependencies]
+tokio = { workspace = true }
+
+[lints]
+workspace = true
+
+[features]
+default = []
+test-utils = []
+ssr = [
+    "dep:higgs-host",
+    "higgs-host/ssr",
+    "dep:leptos",
+    "leptos/ssr",
+    "preflight"]
+preflight = []
+
+[[test]]
+name = "session_server_contract"
+required-features = ["ssr"]
+
+[[test]]
+name = "preflight_contract"
+required-features = ["preflight"]

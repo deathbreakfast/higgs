@@ -1,0 +1,3 @@
+[advisories]
+# Transitive via valence/sql stack; no fixed rsa upgrade available (RUSTSEC-2023-0071).
+ignore = ["RUSTSEC-2023-0071"]
