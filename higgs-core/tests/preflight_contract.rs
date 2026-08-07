@@ -77,7 +77,11 @@ impl PreflightCheck for FailCheck {
 }
 
 #[tokio::test]
+#[allow(clippy::await_holding_lock)] // process-global preflight store; serialize with sync snapshot test
 async fn preflight_runner_empty_happy_path() {
+    let _guard = PREFLIGHT_STORE_LOCK
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
     let runner = PreflightRunner::new();
     let valence = mem_valence();
     let results = runner.run_all(&valence).await;
@@ -85,7 +89,11 @@ async fn preflight_runner_empty_happy_path() {
 }
 
 #[tokio::test]
+#[allow(clippy::await_holding_lock)] // process-global preflight store; serialize with sync snapshot test
 async fn preflight_runner_pass_happy_path() {
+    let _guard = PREFLIGHT_STORE_LOCK
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
     let mut runner = PreflightRunner::new();
     runner.register(PassCheck);
     let valence = mem_valence();
@@ -99,7 +107,11 @@ async fn preflight_runner_pass_happy_path() {
 }
 
 #[tokio::test]
+#[allow(clippy::await_holding_lock)] // process-global preflight store; serialize with sync snapshot test
 async fn preflight_runner_failed_check_sad() {
+    let _guard = PREFLIGHT_STORE_LOCK
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
     let mut runner = PreflightRunner::new();
     runner.register(FailCheck);
     let valence = mem_valence();
