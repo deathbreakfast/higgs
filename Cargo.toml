@@ -40,7 +40,7 @@ serde_json = "1.0"
 tracing = "0.1"
 log = "0.4.27"
 async-trait = "0.1"
-valence = { package = "uf-valence", version = "0.1.5", default-features = false, features = ["mem", "sqlite"] }
+valence = { package = "uf-valence", git = "https://github.com/unified-field-dev/valence", branch = "main", default-features = false, features = ["mem", "sqlite"] }
 anyhow = "1"
 tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
 serde = { version = "1", features = ["derive"] }
@@ -52,28 +52,17 @@ higgs-identity = { path = "higgs-identity" }
 higgs-host = { path = "higgs-host", default-features = false }
 higgs-core = { path = "higgs-core", default-features = false }
 higgs = { path = "higgs", default-features = false }
-# Kits still unpublished: use deathbreakfast pin-published-l0 until uf-dev merges
-# those PRs (main still git-pins older boson/valence and breaks trait identity).
-boson-coordinator = { git = "https://github.com/deathbreakfast/boson-coordinator", branch = "pin-published-l0", default-features = false }
-chronon-coordinator = { git = "https://github.com/deathbreakfast/chronon-coordinator", branch = "pin-published-l0" }
-chronon-core = { version = "0.1.4" }
-chronon-executor = { version = "0.1.4" }
-photon = { package = "uf-photon", version = "0.1.4", default-features = false }
-chronon-valence-identity = { git = "https://github.com/deathbreakfast/chronon-valence-identity", branch = "pin-published-l0" }
-boson-valence-identity = { git = "https://github.com/deathbreakfast/boson-valence-identity", branch = "pin-published-l0" }
-photon-valence-identity = { git = "https://github.com/deathbreakfast/photon-valence-identity", branch = "pin-published-l0" }
-boson-backend-mem = { version = "0.1.4" }
-boson-runtime = { version = "0.1.4", default-features = false }
-boson-core = { version = "0.1.4" }
-boson-macros = { version = "0.1.4" }
-chronon-coordinator-macros = { git = "https://github.com/deathbreakfast/chronon-coordinator-macros", branch = "pin-published-l0", default-features = false }
-
-# Coordinators may still declare uf-dev/* @ main for identities; force one graph.
-[patch."https://github.com/unified-field-dev/boson-valence-identity"]
-boson-valence-identity = { git = "https://github.com/deathbreakfast/boson-valence-identity", branch = "pin-published-l0" }
-
-[patch."https://github.com/unified-field-dev/chronon-valence-identity"]
-chronon-valence-identity = { git = "https://github.com/deathbreakfast/chronon-valence-identity", branch = "pin-published-l0" }
-
-[patch."https://github.com/unified-field-dev/chronon-coordinator"]
-chronon-coordinator = { git = "https://github.com/deathbreakfast/chronon-coordinator", branch = "pin-published-l0" }
+# Unpublished kits: unified-field-dev git (no deathbreakfast pins).
+boson-coordinator = { git = "https://github.com/unified-field-dev/boson-coordinator", branch = "main", default-features = false }
+chronon-coordinator = { git = "https://github.com/unified-field-dev/chronon-coordinator", branch = "main" }
+chronon-core = { git = "https://github.com/unified-field-dev/chronon", branch = "main" }
+chronon-executor = { git = "https://github.com/unified-field-dev/chronon", branch = "main" }
+photon = { package = "uf-photon", git = "https://github.com/unified-field-dev/photon", branch = "main", default-features = false }
+chronon-valence-identity = { git = "https://github.com/unified-field-dev/chronon-valence-identity", branch = "main" }
+boson-valence-identity = { git = "https://github.com/unified-field-dev/boson-valence-identity", branch = "main" }
+photon-valence-identity = { git = "https://github.com/unified-field-dev/photon-valence-identity", branch = "main" }
+boson-backend-mem = { git = "https://github.com/unified-field-dev/boson", branch = "main" }
+boson-runtime = { git = "https://github.com/unified-field-dev/boson", branch = "main", default-features = false }
+boson-core = { git = "https://github.com/unified-field-dev/boson", branch = "main" }
+boson-macros = { git = "https://github.com/unified-field-dev/boson", branch = "main" }
+chronon-coordinator-macros = { git = "https://github.com/unified-field-dev/chronon-coordinator-macros", branch = "main", default-features = false }

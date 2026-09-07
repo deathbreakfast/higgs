@@ -3,6 +3,7 @@ name = "higgs-macros"
 version = "0.1.0"
 edition = "2021"
 license.workspace = true
+description = "Proc macros for the Higgs application context."
 
 [lib]
 proc-macro = true
