@@ -15,6 +15,6 @@
 /reconcile-core/doc
 /reconcile-core/front
 
-# Guide audit contracts live in ~/unified-field/uf-docs-guide-contracts (private)
+# Local guide-audit output
 docs/doc-guide-*.json
 docs/doc-guide-*.toml

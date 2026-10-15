@@ -52,7 +52,7 @@ higgs-identity = { path = "higgs-identity" }
 higgs-host = { path = "higgs-host", default-features = false }
 higgs-core = { path = "higgs-core", default-features = false }
 higgs = { path = "higgs", default-features = false }
-# Unpublished kits: unified-field-dev git (no deathbreakfast pins).
+# Unpublished kits: unified-field-dev git.
 boson-coordinator = { git = "https://github.com/unified-field-dev/boson-coordinator", branch = "main", default-features = false }
 chronon-coordinator = { git = "https://github.com/unified-field-dev/chronon-coordinator", branch = "main" }
 chronon-core = { git = "https://github.com/unified-field-dev/chronon", branch = "main" }
