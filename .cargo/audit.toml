@@ -1,3 +1,5 @@
 [advisories]
 # Transitive via valence/sql stack; no fixed rsa upgrade available (RUSTSEC-2023-0071).
-ignore = ["RUSTSEC-2023-0071"]
+# Both transitive via leptos itself (either_of / leptos_macro); no safe
+# replacement without leptos dropping them upstream.
+ignore = ["RUSTSEC-2023-0071", "RUSTSEC-2024-0436", "RUSTSEC-2026-0173"]
