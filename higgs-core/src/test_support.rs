@@ -3,7 +3,7 @@
 //! Enable with Cargo feature `test-utils` (or use these types from in-crate `#[cfg(test)]`).
 //! Downstream crates depend on `higgs-core` / `higgs` with `test-utils` and install
 //! `UnreachableValenceFactory` when the test only needs a built config, not
-//! [`HiggsValenceFactory::build`](crate::HiggsValenceFactory::build).
+//! [`HiggsValenceFactory::build`].
 //!
 //! ```rust,no_run
 //! # #[cfg(feature = "test-utils")]

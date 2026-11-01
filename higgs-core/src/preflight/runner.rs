@@ -28,7 +28,7 @@ impl PreflightRunner {
     /// Does not return `Result`: individual check outcomes are [`PreflightStatus`]
     /// values collected into [`PreflightResult`]s. Remediation errors are folded into
     /// [`PreflightStatus::Failed`]. Results are also stored via
-    /// [`store_preflight_results`](super::store_preflight_results).
+    /// [`store_preflight_results`].
     pub async fn run_all(&self, valence: &Valence) -> Vec<PreflightResult> {
         let mut results = Vec::with_capacity(self.checks.len());
         for check in &self.checks {
