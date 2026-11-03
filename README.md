@@ -72,7 +72,7 @@ See [SECURITY.md](SECURITY.md) for the integrator threat model. Short version:
 |--------|----------------------|
 | `ctx.valence()` | `ctx.unsafe_system_valence()` without authz |
 | `#[higgs_macros::server(auth)]` when signed-in | Raw `unsafe_data_plane` / `unsafe_database_router` for CRUD |
-| `actor_policy::external_actor_json_policy()` on external factories | Client-supplied `Actor::System` JSON |
+| `actor_policy::external_actor_json_policy()` on external factories | Client-supplied `Actor::System` or `Actor::ServiceUser` JSON |
 
 ## Quick start
 

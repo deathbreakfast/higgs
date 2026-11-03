@@ -36,7 +36,7 @@ cargo test -p higgs-identity --test session_contract
 | Behavior | Level | Happy | Sad | Notes |
 |----------|-------|-------|-----|-------|
 | `HiggsValenceFactory` object-safe + builder | unit | factory set / Arc factory | missing factory → err | `higgs-core::tests` |
-| `external_actor_json_policy` | unit | User actor allowed | System rejected for External | `actor_policy::tests` |
+| `external_actor_json_policy` | unit | User actor allowed | System and ServiceUser rejected for External (ServiceUser: `external_actor_json_policy_rejects_service_user_sad_path`) | `actor_policy::tests` |
 | `HiggsError::internal` display | unit | opaque `"internal higgs error"` | — | no secret leakage |
 | `permission_*_payload` / parse | unit | denied / check-failed round-trip | unrelated / empty prefix → `None` | `server_runtime::tests` |
 | `with_operation` task-local | unit | sets + clears operation | — | `server_runtime` + `higgs-host` |
