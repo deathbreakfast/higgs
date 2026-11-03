@@ -41,6 +41,15 @@
 //!     policy
 //!         .validate(
 //!             ActorTrust::External,
+//!             &serde_json::json!({"ServiceUser":{"service_name":"svc:x"}})
+//!         )
+//!         .is_err(),
+//!     "ServiceUser must fail closed for External"
+//! );
+//! assert!(
+//!     policy
+//!         .validate(
+//!             ActorTrust::External,
 //!             &serde_json::json!({"User":{"user_id":"user:1"}})
 //!         )
 //!         .is_ok(),
@@ -101,6 +110,18 @@ mod tests {
             .validate(ActorTrust::External, &system)
             .expect_err("System must be rejected for External trust");
         let _ = err;
+    }
+
+    #[test]
+    fn external_actor_json_policy_rejects_service_user_sad_path() {
+        let policy = external_actor_json_policy();
+        let service = serde_json::json!({"ServiceUser":{"service_name":"svc:x"}});
+        policy
+            .validate(ActorTrust::External, &service)
+            .expect_err("ServiceUser must be rejected for External trust");
+        policy
+            .validate(ActorTrust::Internal, &service)
+            .expect("Internal trust may carry a server-built ServiceUser");
     }
 
     #[test]
