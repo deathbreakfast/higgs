@@ -117,7 +117,7 @@ impl Higgs {
         self.session_user_id.as_ref()
     }
 
-    /// The current request's Valence actor (derived from the session, or `Anonymous`).
+    /// The current request's Valence actor (explicit, else from the session, else `Anonymous`).
     pub fn actor(&self) -> valence::Actor {
         self.host.actor()
     }
@@ -229,6 +229,7 @@ mod tests {
         let host = HostRequestCtx {
             database_router: Arc::new(valence::DatabaseRouter::new()),
             session: None,
+            explicit_actor: None,
         };
         Higgs::from_parts(host, config)
     }
@@ -258,6 +259,35 @@ mod tests {
             valence::Actor::System { operation } => assert_eq!(operation, "ops.create"),
             other => panic!("expected System actor, got {other:?}"),
         }
+    }
+
+    #[test]
+    fn valence_sends_explicit_actor_to_factory() {
+        let factory = Arc::new(CaptureFactory {
+            last_actor: Mutex::new(None),
+        });
+        let config = Arc::new(
+            HiggsConfig::builder()
+                .valence_factory_arc(factory.clone())
+                .build()
+                .expect("factory set"),
+        );
+        let actor = valence::Actor::ServiceUser {
+            service_name: "bot:x".into(),
+        };
+        let host =
+            HostRequestCtx::for_actor(Arc::new(valence::DatabaseRouter::new()), actor.clone())
+                .expect("service user allowed");
+        let higgs = Higgs::from_parts(host, config);
+        higgs.valence().expect_err("capture factory");
+        let sent = factory
+            .last_actor
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .clone()
+            .expect("factory invoked");
+        let parsed: valence::Actor = serde_json::from_value(sent).expect("actor JSON");
+        assert_eq!(parsed, actor);
     }
 
     #[test]

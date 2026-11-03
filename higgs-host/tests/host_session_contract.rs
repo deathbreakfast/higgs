@@ -14,6 +14,7 @@ fn authenticated_session_maps_to_user_actor_happy_path() {
     let ctx = HostRequestCtx {
         database_router: Arc::new(DatabaseRouter::new()),
         session: Some(SessionSnapshot::new("user:alice", b"hash")),
+        explicit_actor: None,
     };
     match ctx.actor() {
         Actor::User { user_id } => assert_eq!(user_id, "user:alice"),
@@ -28,6 +29,7 @@ fn missing_session_maps_to_anonymous_actor_happy_path() {
     let ctx = HostRequestCtx {
         database_router: Arc::new(DatabaseRouter::new()),
         session: None,
+        explicit_actor: None,
     };
     assert!(matches!(ctx.actor(), Actor::Anonymous));
     assert!(ctx.session_user_id().is_none());
