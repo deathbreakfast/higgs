@@ -81,6 +81,7 @@ impl Higgs {
 
     /// Deprecated alias for [`Self::unsafe_database_router`].
     #[deprecated(
+        since = "0.1.0",
         note = "use unsafe_database_router — prefer valence() for user-driven data access"
     )]
     pub const fn database_router(&self) -> &Arc<valence::DatabaseRouter> {

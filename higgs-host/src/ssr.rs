@@ -165,7 +165,10 @@ pub async fn unsafe_data_plane() -> Result<DataPlaneCtx, ServerFnError> {
 ///
 /// Same as [`unsafe_data_plane`]: returns `ServerFnError` when Axum extensions do not
 /// contain `Extension<Arc<DatabaseRouter>>` or extraction otherwise fails.
-#[deprecated(note = "use unsafe_data_plane — prefer Higgs::valence for user-driven data access")]
+#[deprecated(
+    since = "0.1.0",
+    note = "use unsafe_data_plane — prefer Higgs::valence for user-driven data access"
+)]
 pub async fn data_plane() -> Result<DataPlaneCtx, ServerFnError> {
     unsafe_data_plane().await
 }
