@@ -65,7 +65,25 @@ pub struct HostRequestCtx {
     pub database_router: Arc<DatabaseRouter>,
     /// Session snapshot when auth middleware inserted one; `None` for anonymous requests.
     pub session: Option<SessionSnapshot>,
+    /// Actor for callers that have no session, such as a bearer-token API acting as a bot.
+    /// `None` for session and anonymous requests. Build with [`HostRequestCtx::for_actor`].
+    pub explicit_actor: Option<Actor>,
 }
+
+/// [`HostRequestCtx::for_actor`] was given an [`Actor::System`].
+///
+/// System actors bypass Valence privacy and are minted only through
+/// `Higgs::unsafe_system_valence`.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct SystemActorRejected;
+
+impl std::fmt::Display for SystemActorRejected {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str("System actors cannot be set explicitly; use unsafe_system_valence")
+    }
+}
+
+impl std::error::Error for SystemActorRejected {}
 
 impl HostRequestCtx {
     /// The authenticated session's user id, if any.
@@ -78,8 +96,36 @@ impl HostRequestCtx {
         self.session.is_some()
     }
 
-    /// Derive a Valence [`Actor`] from the session (`User`) or lack thereof (`Anonymous`).
+    /// Context for a caller with no session, acting as `actor` (for example
+    /// `Actor::ServiceUser` for a bearer-token bot). [`Self::session_user_id`] stays `None`
+    /// and [`Self::is_authenticated`] stays `false`; authenticate the caller before
+    /// building this.
+    ///
+    /// # Errors
+    ///
+    /// [`SystemActorRejected`] when `actor` is [`Actor::System`].
+    pub fn for_actor(
+        database_router: Arc<DatabaseRouter>,
+        actor: Actor,
+    ) -> Result<Self, SystemActorRejected> {
+        if actor.is_system() {
+            return Err(SystemActorRejected);
+        }
+        Ok(Self {
+            database_router,
+            session: None,
+            explicit_actor: Some(actor),
+        })
+    }
+
+    /// The explicit actor when set by [`Self::for_actor`] (an `Actor::System` placed in the
+    /// public field directly is ignored); otherwise derived from the
+    /// session (`User`) or lack thereof (`Anonymous`).
     pub fn actor(&self) -> Actor {
+        // The field is public, so re-check here: a literal-built System value is ignored.
+        if let Some(actor) = self.explicit_actor.as_ref().filter(|a| !a.is_system()) {
+            return actor.clone();
+        }
         self.session
             .as_ref()
             .map_or(Actor::Anonymous, |s| Actor::User {
@@ -156,6 +202,7 @@ pub async fn host_ctx() -> Result<HostRequestCtx, ServerFnError> {
     Ok(HostRequestCtx {
         database_router,
         session: session.map(|Extension(s)| s),
+        explicit_actor: None,
     })
 }
 
@@ -222,6 +269,7 @@ mod tests {
         let ctx = HostRequestCtx {
             database_router: Arc::new(DatabaseRouter::new()),
             session: Some(SessionSnapshot::new("user:alice", b"hash")),
+            explicit_actor: None,
         };
         match ctx.actor() {
             Actor::User { user_id } => assert_eq!(user_id, "user:alice"),
@@ -236,10 +284,47 @@ mod tests {
         let ctx = HostRequestCtx {
             database_router: Arc::new(DatabaseRouter::new()),
             session: None,
+            explicit_actor: None,
         };
         assert!(matches!(ctx.actor(), Actor::Anonymous));
         assert!(ctx.session_user_id().is_none());
         assert!(!ctx.is_authenticated());
+    }
+
+    #[test]
+    fn for_actor_service_user_happy_path() {
+        let actor = Actor::ServiceUser {
+            service_name: "bot:x".into(),
+        };
+        let ctx = HostRequestCtx::for_actor(Arc::new(DatabaseRouter::new()), actor.clone())
+            .expect("service user allowed");
+        assert_eq!(ctx.actor(), actor);
+        assert!(ctx.session_user_id().is_none());
+        assert!(!ctx.is_authenticated());
+    }
+
+    #[test]
+    fn for_actor_rejects_system_sad_path() {
+        let err = HostRequestCtx::for_actor(
+            Arc::new(DatabaseRouter::new()),
+            Actor::System {
+                operation: "x".into(),
+            },
+        )
+        .err();
+        assert_eq!(err, Some(SystemActorRejected));
+    }
+
+    #[test]
+    fn literal_system_explicit_actor_is_ignored_sad_path() {
+        let ctx = HostRequestCtx {
+            database_router: Arc::new(DatabaseRouter::new()),
+            session: None,
+            explicit_actor: Some(Actor::System {
+                operation: "x".into(),
+            }),
+        };
+        assert!(matches!(ctx.actor(), Actor::Anonymous));
     }
 
     #[tokio::test]

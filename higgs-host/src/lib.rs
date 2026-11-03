@@ -120,7 +120,7 @@ pub mod ssr;
 #[cfg(feature = "ssr")]
 pub use ssr::{
     current_operation, host_ctx, require_session, unsafe_data_plane, with_operation, DataPlaneCtx,
-    HostRequestCtx,
+    HostRequestCtx, SystemActorRejected,
 };
 
 #[cfg(feature = "ssr")]

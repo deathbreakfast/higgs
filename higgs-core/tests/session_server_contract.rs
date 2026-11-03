@@ -52,6 +52,7 @@ fn host_with_session(user_id: &str) -> HostRequestCtx {
     HostRequestCtx {
         database_router: Arc::new(DatabaseRouter::new()),
         session: Some(SessionSnapshot::new(user_id, b"hash")),
+        explicit_actor: None,
     }
 }
 
@@ -126,6 +127,7 @@ async fn system_valence_with_operation_happy_path() {
     let host = HostRequestCtx {
         database_router: Arc::new(DatabaseRouter::new()),
         session: None,
+        explicit_actor: None,
     };
     let higgs = Higgs::from_parts(host, config);
     let valence = with_operation("ops.seed", async {
