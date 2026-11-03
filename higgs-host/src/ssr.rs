@@ -118,10 +118,12 @@ impl HostRequestCtx {
         })
     }
 
-    /// The explicit actor when set by [`Self::for_actor`]; otherwise derived from the
+    /// The explicit actor when set by [`Self::for_actor`] (an `Actor::System` placed in the
+    /// public field directly is ignored); otherwise derived from the
     /// session (`User`) or lack thereof (`Anonymous`).
     pub fn actor(&self) -> Actor {
-        if let Some(actor) = &self.explicit_actor {
+        // The field is public, so re-check here: a literal-built System value is ignored.
+        if let Some(actor) = self.explicit_actor.as_ref().filter(|a| !a.is_system()) {
             return actor.clone();
         }
         self.session
@@ -311,6 +313,18 @@ mod tests {
         )
         .err();
         assert_eq!(err, Some(SystemActorRejected));
+    }
+
+    #[test]
+    fn literal_system_explicit_actor_is_ignored_sad_path() {
+        let ctx = HostRequestCtx {
+            database_router: Arc::new(DatabaseRouter::new()),
+            session: None,
+            explicit_actor: Some(Actor::System {
+                operation: "x".into(),
+            }),
+        };
+        assert!(matches!(ctx.actor(), Actor::Anonymous));
     }
 
     #[tokio::test]
