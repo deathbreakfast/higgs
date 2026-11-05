@@ -84,6 +84,7 @@ async fn whoami_and_enqueue(
     let host = HostRequestCtx {
         database_router: router,
         session: session.map(|Extension(s)| s),
+        explicit_actor: None,
     };
     let ctx = Higgs::from_parts(host, Arc::clone(&config));
     let interactive = ctx

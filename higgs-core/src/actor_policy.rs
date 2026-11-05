@@ -9,14 +9,16 @@
 //!
 //! Prerequisites: a host factory that rebuilds Valence from enqueue / event / schedule
 //! `actor_json`. First success: attach the policy when building the shared factory, then
-//! rebuild Valence from external actor JSON — System JSON fails closed. Runnable demo:
+//! rebuild Valence from external actor JSON — `System` and `ServiceUser` JSON fail closed. A
+//! service user never comes from a browser session, so external JSON claiming one is treated
+//! as forged; build those actors on the server with `ActorTrust::Internal`. Runnable demo:
 //! `cargo run -p higgs --example shared_factory --features ssr` (prints that external
 //! System was rejected).
 //!
 //! # Examples
 //!
 //! Install the fail-closed policy on the shared factory config, then validate external
-//! actor JSON (System rejected, User allowed).
+//! actor JSON (System and ServiceUser rejected, User allowed).
 //!
 //! ```ignore
 //! use higgs_core::actor_policy::external_actor_json_policy;
@@ -39,6 +41,15 @@
 //!     policy
 //!         .validate(
 //!             ActorTrust::External,
+//!             &serde_json::json!({"ServiceUser":{"service_name":"svc:x"}})
+//!         )
+//!         .is_err(),
+//!     "ServiceUser must fail closed for External"
+//! );
+//! assert!(
+//!     policy
+//!         .validate(
+//!             ActorTrust::External,
 //!             &serde_json::json!({"User":{"user_id":"user:1"}})
 //!         )
 //!         .is_ok(),
@@ -52,9 +63,15 @@
 //! Next: package `higgs` SSR / worker docs for where the factory Arc is registered.
 
 /// Re-export of Valence's fail-closed policy for untrusted `actor_json`.
+///
+/// On `ActorTrust::External` it rejects `System` and `ServiceUser` actors; `User` and
+/// `Anonymous` pass, and `ActorTrust::Internal` is never rejected. Valence now names the
+/// type `RejectExternalPrivilegedActor` and keeps this name as a deprecated alias.
 pub use valence::RejectExternalSystemActor;
 
 /// Recommended policy for host factories that rebuild Valence from external actor JSON.
+///
+/// Rejects `System` and `ServiceUser` actors for `ActorTrust::External`.
 ///
 /// # Examples
 ///
@@ -93,6 +110,18 @@ mod tests {
             .validate(ActorTrust::External, &system)
             .expect_err("System must be rejected for External trust");
         let _ = err;
+    }
+
+    #[test]
+    fn external_actor_json_policy_rejects_service_user_sad_path() {
+        let policy = external_actor_json_policy();
+        let service = serde_json::json!({"ServiceUser":{"service_name":"svc:x"}});
+        policy
+            .validate(ActorTrust::External, &service)
+            .expect_err("ServiceUser must be rejected for External trust");
+        policy
+            .validate(ActorTrust::Internal, &service)
+            .expect("Internal trust may carry a server-built ServiceUser");
     }
 
     #[test]

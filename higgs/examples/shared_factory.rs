@@ -51,6 +51,7 @@ fn main() -> anyhow::Result<()> {
     let host = HostRequestCtx {
         database_router: router,
         session: Some(SessionSnapshot::new("user:demo", b"example-auth-hash")),
+        explicit_actor: None,
     };
     let ctx = Higgs::from_parts(host, Arc::clone(&config));
     let interactive = ctx.valence()?;
